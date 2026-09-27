@@ -489,6 +489,497 @@
         <button type="button" class="btn btn-secondary" data-close-modal>Close</button>
       </div>
     </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management System</title>
+<style>
+  :root {
+    --ink: #1E3450;
+    --ink-dark: #152840;
+    --ink-tint: #EEF2F6;
+    --gold: #B8863B;
+    --gold-dark: #96692A;
+    --gold-tint: #FBF3E4;
+    --sage: #3F7A57;
+    --sage-tint: #E7F3EC;
+    --brick: #AA4433;
+    --brick-tint: #FBEAE6;
+    --paper: #FAF7F1;
+    --card: #FFFFFF;
+    --text: #20293A;
+    --text-muted: #6B7280;
+    --border: #E7E1D6;
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 14px;
+    --shadow-card: 0 1px 2px rgba(30,52,80,0.06), 0 1px 1px rgba(30,52,80,0.04);
+    --shadow-modal: 0 24px 48px rgba(20,30,45,0.24), 0 6px 16px rgba(20,30,45,0.12);
+    --font-serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 16px; }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--paper);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-serif); font-weight: 600; margin: 0; color: var(--ink-dark); }
+  button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- Header ---------- */
+  .app-header {
+    background: var(--ink);
+    background-image: linear-gradient(135deg, var(--ink) 0%, var(--ink-dark) 100%);
+    padding: 28px 24px;
+    border-bottom: 3px solid var(--gold);
+  }
+  .header-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-inner svg { flex-shrink: 0; color: var(--gold); }
+  .app-header h1 { font-size: 26px; color: #fff; letter-spacing: 0.2px; }
+  .app-header p { margin: 2px 0 0; color: #C9D3DE; font-size: 14px; }
+
+  /* ---------- Layout ---------- */
+  .container { max-width: 1180px; margin: 0 auto; padding: 24px; }
+
+  /* ---------- Stats ---------- */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-bottom: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+  }
+  .stat-value { display: block; font-family: var(--font-serif); font-size: 30px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+  .stat-label { display: block; margin-top: 4px; font-size: 13px; color: var(--text-muted); }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .search-box {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 200px;
+  }
+  .search-box svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+  .search-box input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    font-size: 14px;
+    color: var(--text);
+  }
+  .search-box input:focus { border-color: var(--gold); }
+  select.class-filter {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    font-size: 14px;
+    color: var(--text);
+    min-width: 150px;
+  }
+  .toolbar-spacer { flex: 1 1 auto; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: var(--ink-dark); }
+  .btn-secondary { background: var(--card); color: var(--ink); border-color: var(--border); }
+  .btn-secondary:hover { background: var(--ink-tint); }
+  .btn-danger { background: var(--brick); color: #fff; }
+  .btn-danger:hover { background: #8f3527; }
+
+  /* ---------- Table ---------- */
+  .table-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--ink-tint);
+    color: var(--ink-dark);
+    font-weight: 600;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  th[data-sort] { cursor: pointer; user-select: none; }
+  th[data-sort]::after { content: ''; display: inline-block; width: 10px; margin-left: 3px; opacity: 0.4; }
+  th.sort-asc::after { content: '▲'; font-size: 9px; opacity: 1; color: var(--gold-dark); }
+  th.sort-desc::after { content: '▼'; font-size: 9px; opacity: 1; color: var(--gold-dark); }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #FBFAF7; }
+  .mono { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+  .student-name-cell { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .avatar-lg { width: 52px; height: 52px; font-size: 18px; }
+
+  .actions-cell { display: flex; gap: 4px; }
+  .icon-btn {
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .icon-btn:hover { background: var(--ink-tint); }
+  .icon-btn-danger { color: var(--brick); }
+  .icon-btn-danger:hover { background: var(--brick-tint); border-color: var(--brick); }
+
+  /* ---------- Empty state ---------- */
+  .empty-state { display: none; flex-direction: column; align-items: center; text-align: center; padding: 56px 24px; color: var(--text-muted); }
+  .empty-state svg { color: var(--border); margin-bottom: 12px; }
+  .empty-state h3 { color: var(--ink-dark); font-size: 18px; margin-bottom: 4px; }
+  .empty-state p { margin: 0; font-size: 14px; max-width: 320px; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(20,28,40,0.5);
+    align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: modalIn 0.18s ease;
+  }
+  .modal-small { max-width: 420px; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-header h2 { font-size: 20px; }
+  .modal-close {
+    width: 32px; height: 32px; border: none; background: transparent;
+    border-radius: 50%; cursor: pointer; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .modal-close:hover { background: var(--ink-tint); color: var(--ink); }
+  .modal-body { padding: 20px 24px; overflow-y: auto; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--border); }
+
+  /* ---------- Form ---------- */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.span-2 { grid-column: 1 / -1; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--ink-dark); }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--card);
+  }
+  .form-group textarea { resize: vertical; min-height: 44px; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+  .form-group.has-error input, .form-group.has-error select { border-color: var(--brick); }
+  .field-error { font-size: 12px; color: var(--brick); min-height: 14px; }
+
+  /* ---------- View modal ---------- */
+  .view-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .view-header h3 { font-size: 20px; }
+  .view-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; margin: 0; }
+  .view-details-grid .span-2 { grid-column: 1 / -1; }
+  .view-details-grid dt { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+  .view-details-grid dd { margin: 0; font-size: 14px; color: var(--text); }
+
+  /* ---------- Toast ---------- */
+  #toastContainer { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 200; }
+  .toast {
+    background: var(--ink-dark);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    box-shadow: var(--shadow-modal);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    border-left: 3px solid var(--sage);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.toast-error { border-left-color: var(--brick); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 760px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .view-details-grid { grid-template-columns: 1fr; }
+    thead th:nth-child(6), tbody td:nth-child(6) { display: none; }
+    .app-header h1 { font-size: 21px; }
+  }
+  @media (max-width: 480px) {
+    .container { padding: 16px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-value { font-size: 24px; }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    .app-header, .toolbar, .stats-grid, #toastContainer, .modal-overlay { display: none !important; }
+    body { background: #fff; }
+    .table-container { border: none; box-shadow: none; }
+    thead th:last-child, tbody td:last-child { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/></svg>
+      <div>
+        <h1>Student Management System</h1>
+        <p>Keep every student record in one organized register</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-value" id="statTotal">0</span>
+        <span class="stat-label">Total students</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="statClasses">0</span>
+        <span class="stat-label">Classes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="statMale">0</span>
+        <span class="stat-label">Male</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="statFemale">0</span>
+        <span class="stat-label">Female</span>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name or roll number">
+      </div>
+      <select id="classFilter" class="class-filter">
+        <option value="">All classes</option>
+      </select>
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-secondary" id="printBtn" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Print
+      </button>
+      <button class="btn btn-secondary" id="exportBtn" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        Export CSV
+      </button>
+      <button class="btn btn-primary" id="addBtn" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+        Add student
+      </button>
+    </section>
+
+    <section class="table-container">
+      <div class="table-scroll">
+        <table id="studentTable">
+          <thead>
+            <tr>
+              <th data-sort="rollNumber">Roll no.</th>
+              <th data-sort="name">Name</th>
+              <th data-sort="className">Class</th>
+              <th>Gender</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/></svg>
+        <h3 id="emptyTitle">No students yet</h3>
+        <p id="emptyText">Add your first student to start building the register.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Add / Edit modal -->
+  <div class="modal-overlay" id="studentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add student</h2>
+        <button class="modal-close" type="button" data-close-modal aria-label="Close">&times;</button>
+      </div>
+      <form id="studentForm" novalidate>
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="rollNumber">Roll number</label>
+              <input type="text" id="rollNumber" autocomplete="off">
+              <span class="field-error" id="rollNumberError"></span>
+            </div>
+            <div class="form-group">
+              <label for="fullName">Full name</label>
+              <input type="text" id="fullName" autocomplete="off">
+              <span class="field-error" id="fullNameError"></span>
+            </div>
+            <div class="form-group">
+              <label for="className">Class</label>
+              <input type="text" id="className" placeholder="e.g. 10" autocomplete="off">
+              <span class="field-error" id="classNameError"></span>
+            </div>
+            <div class="form-group">
+              <label for="section">Section</label>
+              <input type="text" id="section" placeholder="e.g. A" autocomplete="off">
+              <span class="field-error" id="sectionError"></span>
+            </div>
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <select id="gender">
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="field-error" id="genderError"></span>
+            </div>
+            <div class="form-group">
+              <label for="dob">Date of birth</label>
+              <input type="date" id="dob">
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone number</label>
+              <input type="tel" id="phone" placeholder="10-digit number" autocomplete="off">
+              <span class="field-error" id="phoneError"></span>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" autocomplete="off">
+              <span class="field-error" id="emailError"></span>
+            </div>
+            <div class="form-group">
+              <label for="bloodGroup">Blood group</label>
+              <select id="bloodGroup">
+                <option value="">Select</option>
+                <option>A+</option><option>A-</option>
+                <option>B+</option><option>B-</option>
+                <option>AB+</option><option>AB-</option>
+                <option>O+</option><option>O-</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="admissionDate">Admission date</label>
+              <input type="date" id="admissionDate">
+            </div>
+            <div class="form-group">
+              <label for="parentName">Parent / guardian name</label>
+              <input type="text" id="parentName" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="parentPhone">Parent / guardian phone</label>
+              <input type="tel" id="parentPhone" placeholder="10-digit number" autocomplete="off">
+              <span class="field-error" id="parentPhoneError"></span>
+            </div>
+            <div class="form-group span-2">
+              <label for="address">Address</label>
+              <textarea id="address" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary"><span id="submitBtnText">Add student</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Student details</h2>
+        <button class="modal-close" type="button" data-close-modal aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="viewModalBody"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" data-close-modal>Close</button>
+      </div>
+    </div>
   </div>
 
   <!-- Delete confirm modal -->
@@ -512,4 +1003,411 @@
 
 <script>
 (function () {
-  'use stri
+  'use strict';
+
+  /* ---------------- Seed data ---------------- */
+  var students = [
+    mk('101','Aarav Sharma','10','A','Male','2010-04-12','aarav.sharma@example.com','9876543210','12 MG Road, Pune','Rakesh Sharma','9876500001','B+','2024-06-05'),
+    mk('102','Priya Patel','10','A','Female','2010-07-22','priya.patel@example.com','9876543211','45 FC Road, Pune','Manoj Patel','9876500002','O+','2024-06-05'),
+    mk('118','Rohan Deshmukh','9','B','Male','2011-01-30','','9876543212','8 Karve Nagar, Pune','Sunita Deshmukh','9876500003','A+','2023-06-08'),
+    mk('204','Sneha Kulkarni','11','A','Female','2009-11-02','sneha.kulkarni@example.com','9876543213','21 Kothrud, Pune','Vijay Kulkarni','9876500004','AB+','2022-06-03'),
+    mk('205','Arjun Singh','11','B','Male','2009-09-15','','9876543214','63 Hadapsar, Pune','Manpreet Singh','9876500005','O-','2022-06-03'),
+    mk('312','Isha Joshi','12','A','Female','2008-03-18','isha.joshi@example.com','9876543215','9 Baner Road, Pune','Suresh Joshi','9876500006','B-','2021-06-01')
+  ];
+  function mk(rollNumber,name,className,section,gender,dob,email,phone,address,parentName,parentPhone,bloodGroup,admissionDate){
+    return {id:uid(),rollNumber:rollNumber,name:name,className:className,section:section,gender:gender,dob:dob,email:email,phone:phone,address:address,parentName:parentName,parentPhone:parentPhone,bloodGroup:bloodGroup,admissionDate:admissionDate};
+  }
+
+  var editId = null;
+  var deleteId = null;
+  var sortKey = 'rollNumber';
+  var sortDir = 'asc';
+  var searchTerm = '';
+  var classFilterVal = '';
+
+  /* ---------------- Utilities ---------------- */
+  function uid(){ return 'S' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHtml(v){
+    if (v === null || v === undefined) return '';
+    return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  function formatDate(iso){
+    if (!iso) return '—';
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+  }
+  function initialsOf(name){
+    var parts = String(name).trim().split(/\s+/);
+    var initials = parts.slice(0,2).map(function(p){ return p.charAt(0).toUpperCase(); }).join('');
+    return initials || '?';
+  }
+  var AVATAR_COLORS = ['#1E3450','#B8863B','#3F7A57','#7C5295','#AA4433','#2F6690','#6B5B95'];
+  function avatarColor(name){
+    var hash = 0;
+    var s = String(name);
+    for (var i=0;i<s.length;i++){ hash = s.charCodeAt(i) + ((hash << 5) - hash); }
+    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  }
+  function byId(id){ return document.getElementById(id); }
+
+  /* ---------------- Derived data ---------------- */
+  function getFilteredSorted(){
+    var term = searchTerm.trim().toLowerCase();
+    var list = students.filter(function(s){
+      var matchesSearch = !term || s.name.toLowerCase().indexOf(term) !== -1 || s.rollNumber.toLowerCase().indexOf(term) !== -1;
+      var matchesClass = !classFilterVal || s.className === classFilterVal;
+      return matchesSearch && matchesClass;
+    });
+    list.sort(function(a,b){
+      var av = a[sortKey], bv = b[sortKey];
+      if (typeof av === 'string') av = av.toLowerCase();
+      if (typeof bv === 'string') bv = bv.toLowerCase();
+      if (av < bv) return sortDir === 'asc' ? -1 : 1;
+      if (av > bv) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return list;
+  }
+
+  /* ---------------- Rendering ---------------- */
+  function render(){
+    var list = getFilteredSorted();
+    var tbody = byId('tableBody');
+    var emptyState = byId('emptyState');
+    var table = byId('studentTable');
+
+    if (list.length === 0){
+      tbody.innerHTML = '';
+      table.style.display = 'none';
+      emptyState.style.display = 'flex';
+      if (students.length === 0){
+        byId('emptyTitle').textContent = 'No students yet';
+        byId('emptyText').textContent = 'Add your first student to start building the register.';
+      } else {
+        byId('emptyTitle').textContent = 'No matches found';
+        byId('emptyText').textContent = 'Try a different name, roll number, or class filter.';
+      }
+    } else {
+      table.style.display = 'table';
+      emptyState.style.display = 'none';
+      var html = '';
+      for (var i=0;i<list.length;i++){ html += rowHTML(list[i]); }
+      tbody.innerHTML = html;
+    }
+
+    updateStats();
+    updateClassFilterOptions();
+    updateSortIndicators();
+  }
+
+  function rowHTML(s){
+    return '<tr>' +
+      '<td class="mono">' + escapeHtml(s.rollNumber) + '</td>' +
+      '<td><div class="student-name-cell">' +
+        '<span class="avatar" style="background:' + avatarColor(s.name) + '">' + escapeHtml(initialsOf(s.name)) + '</span>' +
+        '<span>' + escapeHtml(s.name) + '</span>' +
+      '</div></td>' +
+      '<td>' + escapeHtml(s.className) + '-' + escapeHtml(s.section) + '</td>' +
+      '<td>' + escapeHtml(s.gender || '—') + '</td>' +
+      '<td class="mono">' + escapeHtml(s.phone || '—') + '</td>' +
+      '<td>' + escapeHtml(s.email || '—') + '</td>' +
+      '<td class="actions-cell">' +
+        '<button class="icon-btn" data-action="view" data-id="' + s.id + '" title="View" aria-label="View ' + escapeHtml(s.name) + '">' + ICON_VIEW + '</button>' +
+        '<button class="icon-btn" data-action="edit" data-id="' + s.id + '" title="Edit" aria-label="Edit ' + escapeHtml(s.name) + '">' + ICON_EDIT + '</button>' +
+        '<button class="icon-btn icon-btn-danger" data-action="delete" data-id="' + s.id + '" title="Remove" aria-label="Remove ' + escapeHtml(s.name) + '">' + ICON_DELETE + '</button>' +
+      '</td>' +
+    '</tr>';
+  }
+
+  var ICON_VIEW = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var ICON_EDIT = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+  var ICON_DELETE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+
+  function updateStats(){
+    byId('statTotal').textContent = students.length;
+    var classes = {};
+    var male = 0, female = 0;
+    students.forEach(function(s){
+      classes[s.className] = true;
+      if (s.gender === 'Male') male++;
+      if (s.gender === 'Female') female++;
+    });
+    byId('statClasses').textContent = Object.keys(classes).length;
+    byId('statMale').textContent = male;
+    byId('statFemale').textContent = female;
+  }
+
+  function updateClassFilterOptions(){
+    var select = byId('classFilter');
+    var current = select.value;
+    var seen = {};
+    var classes = [];
+    students.forEach(function(s){ if (!seen[s.className]) { seen[s.className] = true; classes.push(s.className); } });
+    classes.sort(function(a,b){ return a.localeCompare(b, undefined, {numeric:true}); });
+    var html = '<option value="">All classes</option>';
+    classes.forEach(function(c){ html += '<option value="' + escapeHtml(c) + '">Class ' + escapeHtml(c) + '</option>'; });
+    select.innerHTML = html;
+    select.value = classes.indexOf(current) !== -1 ? current : '';
+    classFilterVal = select.value;
+  }
+
+  function updateSortIndicators(){
+    var ths = document.querySelectorAll('th[data-sort]');
+    for (var i=0;i<ths.length;i++){
+      ths[i].classList.remove('sort-asc','sort-desc');
+      if (ths[i].getAttribute('data-sort') === sortKey){
+        ths[i].classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+    }
+  }
+
+  /* ---------------- Add / Edit modal ---------------- */
+  function openAddModal(){
+    editId = null;
+    byId('modalTitle').textContent = 'Add student';
+    byId('submitBtnText').textContent = 'Add student';
+    byId('studentForm').reset();
+    clearFormErrors();
+    byId('admissionDate').value = todayISO();
+    byId('studentModal').classList.add('active');
+    setTimeout(function(){ byId('rollNumber').focus(); }, 0);
+  }
+
+  function openEditModal(id){
+    var s = findStudent(id);
+    if (!s) return;
+    editId = id;
+    byId('modalTitle').textContent = 'Edit student';
+    byId('submitBtnText').textContent = 'Save changes';
+    clearFormErrors();
+    byId('rollNumber').value = s.rollNumber;
+    byId('fullName').value = s.name;
+    byId('className').value = s.className;
+    byId('section').value = s.section;
+    byId('gender').value = s.gender || '';
+    byId('dob').value = s.dob || '';
+    byId('email').value = s.email || '';
+    byId('phone').value = s.phone || '';
+    byId('address').value = s.address || '';
+    byId('parentName').value = s.parentName || '';
+    byId('parentPhone').value = s.parentPhone || '';
+    byId('bloodGroup').value = s.bloodGroup || '';
+    byId('admissionDate').value = s.admissionDate || '';
+    byId('studentModal').classList.add('active');
+  }
+
+  function closeModal(overlay){ overlay.classList.remove('active'); }
+
+  function findStudent(id){
+    for (var i=0;i<students.length;i++){ if (students[i].id === id) return students[i]; }
+    return null;
+  }
+
+  function clearFormErrors(){
+    var errs = document.querySelectorAll('#studentForm .field-error');
+    for (var i=0;i<errs.length;i++){ errs[i].textContent = ''; }
+    var groups = document.querySelectorAll('#studentForm .form-group');
+    for (var j=0;j<groups.length;j++){ groups[j].classList.remove('has-error'); }
+  }
+
+  function setFieldError(fieldId, message){
+    var errorEl = byId(fieldId + 'Error');
+    if (errorEl) errorEl.textContent = message;
+    var input = byId(fieldId);
+    var group = input ? input.closest('.form-group') : null;
+    if (group) group.classList.add('has-error');
+  }
+
+  function validateAndSave(e){
+    e.preventDefault();
+    clearFormErrors();
+    var valid = true;
+
+    var rollNumber = byId('rollNumber').value.trim();
+    var fullName = byId('fullName').value.trim();
+    var className = byId('className').value.trim();
+    var section = byId('section').value.trim();
+    var gender = byId('gender').value;
+    var dob = byId('dob').value;
+    var email = byId('email').value.trim();
+    var phone = byId('phone').value.trim();
+    var address = byId('address').value.trim();
+    var parentName = byId('parentName').value.trim();
+    var parentPhone = byId('parentPhone').value.trim();
+    var bloodGroup = byId('bloodGroup').value;
+    var admissionDate = byId('admissionDate').value;
+
+    if (!rollNumber){ setFieldError('rollNumber','Roll number is required'); valid = false; }
+    else {
+      var dup = students.filter(function(s){ return s.rollNumber.toLowerCase() === rollNumber.toLowerCase() && s.id !== editId; })[0];
+      if (dup){ setFieldError('rollNumber','This roll number is already in use'); valid = false; }
+    }
+    if (!fullName || fullName.length < 2){ setFieldError('fullName',"Enter the student's full name"); valid = false; }
+    if (!className){ setFieldError('className','Class is required'); valid = false; }
+    if (!section){ setFieldError('section','Section is required'); valid = false; }
+    if (!gender){ setFieldError('gender','Select a gender'); valid = false; }
+    if (!phone || !/^\d{10}$/.test(phone)){ setFieldError('phone','Enter a valid 10-digit phone number'); valid = false; }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setFieldError('email','Enter a valid email address'); valid = false; }
+    if (parentPhone && !/^\d{10}$/.test(parentPhone)){ setFieldError('parentPhone','Enter a valid 10-digit phone number'); valid = false; }
+
+    if (!valid) return;
+
+    if (editId){
+      var s = findStudent(editId);
+      s.rollNumber = rollNumber; s.name = fullName; s.className = className; s.section = section;
+      s.gender = gender; s.dob = dob; s.email = email; s.phone = phone; s.address = address;
+      s.parentName = parentName; s.parentPhone = parentPhone; s.bloodGroup = bloodGroup; s.admissionDate = admissionDate;
+      showToast('Changes saved', 'success');
+    } else {
+      students.push({id:uid(), rollNumber:rollNumber, name:fullName, className:className, section:section, gender:gender, dob:dob, email:email, phone:phone, address:address, parentName:parentName, parentPhone:parentPhone, bloodGroup:bloodGroup, admissionDate:admissionDate});
+      showToast('Student added', 'success');
+    }
+    closeModal(byId('studentModal'));
+    render();
+  }
+
+  /* ---------------- View modal ---------------- */
+  function openViewModal(id){
+    var s = findStudent(id);
+    if (!s) return;
+    var html = '<div class="view-header">' +
+        '<span class="avatar avatar-lg" style="background:' + avatarColor(s.name) + '">' + escapeHtml(initialsOf(s.name)) + '</span>' +
+        '<h3>' + escapeHtml(s.name) + '</h3>' +
+      '</div>' +
+      '<dl class="view-details-grid">' +
+        detailRow('Roll number', escapeHtml(s.rollNumber)) +
+        detailRow('Class', escapeHtml(s.className) + ', Section ' + escapeHtml(s.section)) +
+        detailRow('Gender', escapeHtml(s.gender || '—')) +
+        detailRow('Date of birth', formatDate(s.dob)) +
+        detailRow('Blood group', escapeHtml(s.bloodGroup || '—')) +
+        detailRow('Admission date', formatDate(s.admissionDate)) +
+        detailRow('Phone', escapeHtml(s.phone || '—')) +
+        detailRow('Email', escapeHtml(s.email || '—')) +
+        detailRow('Parent / guardian', escapeHtml(s.parentName || '—')) +
+        detailRow('Parent phone', escapeHtml(s.parentPhone || '—')) +
+        detailRow('Address', escapeHtml(s.address || '—'), true) +
+      '</dl>';
+    byId('viewModalBody').innerHTML = html;
+    byId('viewModal').classList.add('active');
+  }
+  function detailRow(label, value, span){
+    return '<div' + (span ? ' class="span-2"' : '') + '><dt>' + label + '</dt><dd>' + value + '</dd></div>';
+  }
+
+  /* ---------------- Delete modal ---------------- */
+  function openDeleteModal(id){
+    var s = findStudent(id);
+    if (!s) return;
+    deleteId = id;
+    byId('deleteStudentName').textContent = s.name;
+    byId('deleteModal').classList.add('active');
+  }
+  function confirmDeleteAction(){
+    var s = findStudent(deleteId);
+    students = students.filter(function(x){ return x.id !== deleteId; });
+    closeModal(byId('deleteModal'));
+    showToast((s ? s.name : 'Student') + ' removed', 'success');
+    deleteId = null;
+    render();
+  }
+
+  /* ---------------- Toast ---------------- */
+  function showToast(message, type){
+    var container = byId('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast' + (type === 'error' ? ' toast-error' : '');
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(function(){ toast.classList.add('show'); });
+    setTimeout(function(){
+      toast.classList.remove('show');
+      setTimeout(function(){ if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+    }, 2600);
+  }
+
+  /* ---------------- CSV export ---------------- */
+  function csvEscape(val){
+    var s = val === null || val === undefined ? '' : String(val);
+    if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  }
+  function exportCSV(){
+    var list = getFilteredSorted();
+    if (list.length === 0){ showToast('No students to export', 'error'); return; }
+    var headers = ['Roll Number','Name','Class','Section','Gender','Date of Birth','Email','Phone','Address','Parent Name','Parent Phone','Blood Group','Admission Date'];
+    var rows = list.map(function(s){
+      return [s.rollNumber,s.name,s.className,s.section,s.gender,s.dob,s.email,s.phone,s.address,s.parentName,s.parentPhone,s.bloodGroup,s.admissionDate];
+    });
+    var lines = [headers].concat(rows).map(function(row){ return row.map(csvEscape).join(','); });
+    var csvContent = lines.join('\r\n');
+    var blob = new Blob([csvContent], {type:'text/csv;charset=utf-8;'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'students_' + todayISO() + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Student list exported', 'success');
+  }
+
+  /* ---------------- Event bindings ---------------- */
+  byId('addBtn').addEventListener('click', openAddModal);
+  byId('exportBtn').addEventListener('click', exportCSV);
+  byId('printBtn').addEventListener('click', function(){ window.print(); });
+  byId('studentForm').addEventListener('submit', validateAndSave);
+
+  byId('searchInput').addEventListener('input', function(e){ searchTerm = e.target.value; render(); });
+  byId('classFilter').addEventListener('change', function(e){ classFilterVal = e.target.value; render(); });
+
+  byId('tableBody').addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    var id = btn.getAttribute('data-id');
+    var action = btn.getAttribute('data-action');
+    if (action === 'view') openViewModal(id);
+    else if (action === 'edit') openEditModal(id);
+    else if (action === 'delete') openDeleteModal(id);
+  });
+
+  var sortHeaders = document.querySelectorAll('th[data-sort]');
+  for (var h=0; h<sortHeaders.length; h++){
+    sortHeaders[h].addEventListener('click', function(){
+      var key = this.getAttribute('data-sort');
+      if (sortKey === key) sortDir = (sortDir === 'asc') ? 'desc' : 'asc';
+      else { sortKey = key; sortDir = 'asc'; }
+      render();
+    });
+  }
+
+  var closeButtons = document.querySelectorAll('[data-close-modal]');
+  for (var c=0;c<closeButtons.length;c++){
+    closeButtons[c].addEventListener('click', function(){
+      closeModal(this.closest('.modal-overlay'));
+    });
+  }
+  var overlays = document.querySelectorAll('.modal-overlay');
+  for (var o=0;o<overlays.length;o++){
+    overlays[o].addEventListener('click', function(e){
+      if (e.target === this) closeModal(this);
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){
+      var active = document.querySelectorAll('.modal-overlay.active');
+      for (var i=0;i<active.length;i++){ closeModal(active[i]); }
+    }
+  });
+
+  byId('confirmDeleteBtn').addEventListener('click', confirmDeleteAction);
+
+  /* ---------------- Init ---------------- */
+  render();
+})();
+</script>
+</body>
+</html>
+
